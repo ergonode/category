@@ -10,16 +10,15 @@ declare(strict_types = 1);
 namespace Ergonode\Category\Persistence\Dbal\Projector;
 
 use Doctrine\DBAL\Connection;
-use Ergonode\Category\Domain\Event\CategoryNameChangedEvent;
+use Ergonode\Category\Domain\Event\CategoryDeletedEvent;
 use Ergonode\Core\Domain\Entity\AbstractId;
 use Ergonode\EventSourcing\Infrastructure\DomainEventInterface;
 use Ergonode\EventSourcing\Infrastructure\Exception\UnsupportedEventException;
 use Ergonode\EventSourcing\Infrastructure\Projector\DomainEventProjectorInterface;
-use JMS\Serializer\SerializerInterface;
 
 /**
  */
-class CategoryNameChangedEventProjector implements DomainEventProjectorInterface
+class CategoryDeletedEventProjector implements DomainEventProjectorInterface
 {
     private const TABLE = 'category';
 
@@ -29,18 +28,11 @@ class CategoryNameChangedEventProjector implements DomainEventProjectorInterface
     private $connection;
 
     /**
-     * @var SerializerInterface
+     * @param Connection $connection
      */
-    private $serializer;
-
-    /**
-     * @param Connection          $connection
-     * @param SerializerInterface $serializer
-     */
-    public function __construct(Connection $connection, SerializerInterface $serializer)
+    public function __construct(Connection $connection)
     {
         $this->connection = $connection;
-        $this->serializer = $serializer;
     }
 
     /**
@@ -48,7 +40,7 @@ class CategoryNameChangedEventProjector implements DomainEventProjectorInterface
      */
     public function supports(DomainEventInterface $event): bool
     {
-        return $event instanceof CategoryNameChangedEvent;
+        return $event instanceof CategoryDeletedEvent;
     }
 
     /**
@@ -57,14 +49,11 @@ class CategoryNameChangedEventProjector implements DomainEventProjectorInterface
     public function projection(AbstractId $aggregateId, DomainEventInterface $event): void
     {
         if (!$this->supports($event)) {
-            throw new UnsupportedEventException($event, CategoryNameChangedEvent::class);
+            throw new UnsupportedEventException($event, CategoryDeletedEvent::class);
         }
 
-        $this->connection->update(
+        $this->connection->delete(
             self::TABLE,
-            [
-                'name' => $this->serializer->serialize($event->getTo()->getTranslations(), 'json'),
-            ],
             [
                 'id' => $aggregateId->getValue(),
             ]
