@@ -6,11 +6,11 @@
 
 declare(strict_types = 1);
 
-namespace Ergonode\Category\Tests\Application\Request\ParamConveter;
+namespace Ergonode\Category\Tests\Application\Request\ParamConverter;
 
-use Ergonode\Category\Application\Request\ParamConverter\CategoryParamConverter;
-use Ergonode\Category\Domain\Entity\Category;
-use Ergonode\Category\Domain\Repository\CategoryRepositoryInterface;
+use Ergonode\Category\Application\Request\ParamConverter\CategoryTreeParamConverter;
+use Ergonode\Category\Domain\Entity\CategoryTree;
+use Ergonode\Category\Domain\Repository\TreeRepositoryInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Ramsey\Uuid\Uuid;
@@ -20,7 +20,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  */
-class CategoryParamConverterTest extends TestCase
+class CategoryTreeParamConverterTest extends TestCase
 {
     /**
      * @var Request|MockObject
@@ -33,7 +33,7 @@ class CategoryParamConverterTest extends TestCase
     private $configuration;
 
     /**
-     * @var CategoryRepositoryInterface|MockObject
+     * @var TreeRepositoryInterface|MockObject
      */
     private $repository;
 
@@ -43,7 +43,7 @@ class CategoryParamConverterTest extends TestCase
     {
         $this->request = $this->createMock(Request::class);
         $this->configuration = $this->createMock(ParamConverter::class);
-        $this->repository = $this->createMock(CategoryRepositoryInterface::class);
+        $this->repository = $this->createMock(TreeRepositoryInterface::class);
     }
 
     /**
@@ -51,9 +51,9 @@ class CategoryParamConverterTest extends TestCase
     public function testSupportedClass(): void
     {
         $this->request->method('get')->willReturn(null);
-        $this->configuration->method('getClass')->willReturn(Category::class);
+        $this->configuration->method('getClass')->willReturn(CategoryTree::class);
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $this->assertTrue($paramConverter->supports($this->configuration));
     }
 
@@ -64,7 +64,7 @@ class CategoryParamConverterTest extends TestCase
         $this->request->method('get')->willReturn(null);
         $this->configuration->method('getClass')->willReturn('Any other class namespace');
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $this->assertFalse($paramConverter->supports($this->configuration));
     }
 
@@ -75,7 +75,7 @@ class CategoryParamConverterTest extends TestCase
     {
         $this->request->method('get')->willReturn(null);
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $paramConverter->apply($this->request, $this->configuration);
     }
 
@@ -86,7 +86,7 @@ class CategoryParamConverterTest extends TestCase
     {
         $this->request->method('get')->willReturn('incorrect uuid');
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $paramConverter->apply($this->request, $this->configuration);
     }
 
@@ -97,7 +97,7 @@ class CategoryParamConverterTest extends TestCase
     {
         $this->request->method('get')->willReturn(Uuid::uuid4()->toString());
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $paramConverter->apply($this->request, $this->configuration);
     }
 
@@ -106,11 +106,11 @@ class CategoryParamConverterTest extends TestCase
     public function testEntityExists(): void
     {
         $this->request->method('get')->willReturn(Uuid::uuid4()->toString());
-        $this->repository->method('load')->willReturn($this->createMock(Category::class));
+        $this->repository->method('load')->willReturn($this->createMock(CategoryTree::class));
         $this->request->attributes = $this->createMock(ParameterBag::class);
         $this->request->attributes->expects($this->once())->method('set');
 
-        $paramConverter = new CategoryParamConverter($this->repository);
+        $paramConverter = new CategoryTreeParamConverter($this->repository);
         $paramConverter->apply($this->request, $this->configuration);
     }
 }
