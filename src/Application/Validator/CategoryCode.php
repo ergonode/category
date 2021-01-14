@@ -8,19 +8,19 @@ declare(strict_types=1);
 
 namespace Ergonode\Category\Application\Validator;
 
-use Ergonode\Category\Domain\ValueObject\CategoryCode;
-use Ergonode\SharedKernel\Application\Validator\SystemCodeConstraint;
+use Ergonode\Category\Domain\ValueObject\CategoryCode as ValueObject;
+use Ergonode\SharedKernel\Application\Validator\SystemCode;
 
 /**
  * @Annotation
  */
-class CategoryCodeConstraint extends SystemCodeConstraint
+class CategoryCode extends SystemCode
 {
     public string $regexMessage = 'System name can have only letters, digits or underscore symbol';
 
-    public int $min = CategoryCode::MIN_LENGTH;
+    public int $min = ValueObject::MIN_LENGTH;
 
-    public int $max = CategoryCode::MAX_LENGTH;
+    public int $max = ValueObject::MAX_LENGTH;
 
-    public string $pattern = CategoryCode::PATTERN;
+    public string $pattern = ValueObject::PATTERN;
 }

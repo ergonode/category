@@ -7,34 +7,30 @@
 
 declare(strict_types=1);
 
-namespace Ergonode\Category\Tests\Infrastructure\Validator;
+namespace Ergonode\Category\Tests\Application\Validator;
 
-use Ergonode\Category\Domain\Repository\TreeRepositoryInterface;
-use Ergonode\Category\Infrastructure\Validator\CategoryTreeExists;
-use Ergonode\Category\Infrastructure\Validator\CategoryTreeExistsValidator;
+use Ergonode\Category\Domain\Query\TreeQueryInterface;
+use Ergonode\Category\Application\Validator\CategoryTreeCodeUnique;
+use Ergonode\Category\Application\Validator\CategoryTreeCodeUniqueValidator;
 use Ergonode\SharedKernel\Domain\Aggregate\CategoryTreeId;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\ValidatorException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class CategoryTreeExistsValidatorTest extends ConstraintValidatorTestCase
+class CategoryTreeCodeUniqueValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * @var TreeRepositoryInterface|MockObject
-     */
-    private $repository;
+    private TreeQueryInterface $query;
 
     protected function setUp(): void
     {
-        $this->repository = $this->createMock(TreeRepositoryInterface::class);
+        $this->query = $this->createMock(TreeQueryInterface::class);
         parent::setUp();
     }
 
     public function testWrongValueProvided(): void
     {
         $this->expectException(ValidatorException::class);
-        $this->validator->validate(new \stdClass(), new CategoryTreeExists());
+        $this->validator->validate(new \stdClass(), new CategoryTreeCodeUnique());
     }
 
     public function testWrongConstraintProvided(): void
@@ -47,32 +43,32 @@ class CategoryTreeExistsValidatorTest extends ConstraintValidatorTestCase
 
     public function testCorrectEmptyValidation(): void
     {
-        $this->validator->validate('', new CategoryTreeExists());
+        $this->validator->validate('', new CategoryTreeCodeUnique());
 
         $this->assertNoViolation();
     }
 
-    public function testTreeExistsValidation(): void
+    public function testTreeUniqueValidation(): void
     {
-        $this->repository->method('exists')->willReturn(true);
-        $this->validator->validate(CategoryTreeId::generate(), new CategoryTreeExists());
+        $this->query->method('findTreeIdByCode')->willReturn(null);
+        $this->validator->validate(CategoryTreeId::generate(), new CategoryTreeCodeUnique());
 
         $this->assertNoViolation();
     }
 
-    public function testTreeNotExistsValidation(): void
+    public function testTreeNotUniqueValidation(): void
     {
-        $this->repository->method('load')->willReturn(null);
-        $constraint = new CategoryTreeExists();
         $value = CategoryTreeId::generate();
+        $this->query->method('findTreeIdByCode')->willReturn($value);
+        $constraint = new CategoryTreeCodeUnique();
         $this->validator->validate($value, $constraint);
 
         $assertion = $this->buildViolation($constraint->message)->setParameter('{{ value }}', $value);
         $assertion->assertRaised();
     }
 
-    protected function createValidator(): CategoryTreeExistsValidator
+    protected function createValidator(): CategoryTreeCodeUniqueValidator
     {
-        return new CategoryTreeExistsValidator($this->repository);
+        return new CategoryTreeCodeUniqueValidator($this->query);
     }
 }

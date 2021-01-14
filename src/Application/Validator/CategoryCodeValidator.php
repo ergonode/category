@@ -8,21 +8,21 @@ declare(strict_types=1);
 
 namespace Ergonode\Category\Application\Validator;
 
-use Ergonode\Category\Domain\ValueObject\CategoryCode;
+use Ergonode\Category\Domain\ValueObject\CategoryCode as ValueObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class CategoryCodeConstraintValidator extends ConstraintValidator
+class CategoryCodeValidator extends ConstraintValidator
 {
     /**
      * @param mixed                             $value
-     * @param CategoryCodeConstraint|Constraint $constraint
+     * @param CategoryCode|Constraint $constraint
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof CategoryCodeConstraint) {
-            throw new UnexpectedTypeException($constraint, CategoryCodeConstraint::class);
+        if (!$constraint instanceof CategoryCode) {
+            throw new UnexpectedTypeException($constraint, CategoryCode::class);
         }
 
         if (null === $value || '' === $value) {
@@ -56,7 +56,7 @@ class CategoryCodeConstraintValidator extends ConstraintValidator
 
             return;
         }
-        if (!CategoryCode::isValid($value)) {
+        if (!ValueObject::isValid($value)) {
             $this->context->buildViolation($constraint->validMessage)
                 ->setParameter('{{ value }}', $value)
                 ->addViolation();

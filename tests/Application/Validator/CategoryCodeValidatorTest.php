@@ -8,17 +8,17 @@ declare(strict_types=1);
 
 namespace Ergonode\Category\Tests\Application\Validator;
 
-use Ergonode\Category\Application\Validator\CategoryCodeConstraint;
-use Ergonode\Category\Application\Validator\CategoryCodeConstraintValidator;
+use Ergonode\Category\Application\Validator\CategoryCode;
+use Ergonode\Category\Application\Validator\CategoryCodeValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class CategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
+class CategoryCodeValidatorTest extends ConstraintValidatorTestCase
 {
     public function testWrongValueProvided(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\UnexpectedTypeException::class);
-        $this->validator->validate(new \stdClass(), new CategoryCodeConstraint());
+        $this->validator->validate(new \stdClass(), new CategoryCode());
     }
 
     public function testWrongConstraintProvided(): void
@@ -31,21 +31,21 @@ class CategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
 
     public function testCorrectEmptyValidation(): void
     {
-        $this->validator->validate('', new CategoryCodeConstraint());
+        $this->validator->validate('', new CategoryCode());
 
         $this->assertNoViolation();
     }
 
     public function testCorrectValueValidation(): void
     {
-        $this->validator->validate('code', new CategoryCodeConstraint());
+        $this->validator->validate('code', new CategoryCode());
 
         $this->assertNoViolation();
     }
 
     public function testInCorrectLongValueValidation(): void
     {
-        $constraint = new CategoryCodeConstraint();
+        $constraint = new CategoryCode();
         $value = 'CODE_NOT_VALID_'.str_repeat('a', 114);
         $this->validator->validate($value, $constraint);
 
@@ -55,7 +55,7 @@ class CategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
 
     public function testInCorrectShortValueValidation(): void
     {
-        $constraint = new CategoryCodeConstraint();
+        $constraint = new CategoryCode();
         $value = ' ';
         $this->validator->validate($value, $constraint);
 
@@ -65,7 +65,7 @@ class CategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
 
     public function testInCorrectValueValidation(): void
     {
-        $constraint = new CategoryCodeConstraint();
+        $constraint = new CategoryCode();
         $value = 'SKU!!';
         $this->validator->validate($value, $constraint);
 
@@ -73,8 +73,8 @@ class CategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
         $assertion->assertRaised();
     }
 
-    protected function createValidator(): CategoryCodeConstraintValidator
+    protected function createValidator(): CategoryCodeValidator
     {
-        return new CategoryCodeConstraintValidator();
+        return new CategoryCodeValidator();
     }
 }

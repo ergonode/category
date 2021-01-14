@@ -1,5 +1,5 @@
 <?php
-/*
+/**
  * Copyright © Bold Brand Commerce Sp. z o.o. All rights reserved.
  * See LICENSE.txt for license details.
  */
@@ -13,7 +13,7 @@ use Symfony\Component\Validator\Constraint;
 /**
  * @Annotation
  */
-class UniqueCategoryCodeConstraint extends Constraint
+class CategoryTreeExists extends Constraint
 {
-    public string $uniqueMessage = 'The category code is not unique.';
+    public string $message = 'Category tree not exists.';
 }

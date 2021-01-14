@@ -8,15 +8,15 @@ declare(strict_types=1);
 
 namespace Ergonode\Category\Tests\Application\Validator;
 
-use Ergonode\Category\Application\Validator\UniqueCategoryCodeConstraint;
-use Ergonode\Category\Application\Validator\UniqueCategoryCodeConstraintValidator;
+use Ergonode\Category\Application\Validator\CategoryCodeUnique;
+use Ergonode\Category\Application\Validator\CategoryCodeUniqueValidator;
 use Ergonode\Category\Domain\Query\CategoryQueryInterface;
 use Ergonode\SharedKernel\Domain\Aggregate\CategoryId;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
-class UniqueCategoryCodeConstraintValidatorTest extends ConstraintValidatorTestCase
+class CategoryCodeUniqueValidatorTest extends ConstraintValidatorTestCase
 {
     /**
      * @var CategoryQueryInterface|MockObject
@@ -31,7 +31,7 @@ class UniqueCategoryCodeConstraintValidatorTest extends ConstraintValidatorTestC
     public function testWrongValueProvided(): void
     {
         $this->expectException(\Symfony\Component\Validator\Exception\ValidatorException::class);
-        $this->validator->validate(new \stdClass(), new UniqueCategoryCodeConstraint());
+        $this->validator->validate(new \stdClass(), new CategoryCodeUnique());
     }
 
     public function testWrongConstraintProvided(): void
@@ -44,7 +44,7 @@ class UniqueCategoryCodeConstraintValidatorTest extends ConstraintValidatorTestC
 
     public function testCorrectEmptyValidation(): void
     {
-        $this->validator->validate('', new UniqueCategoryCodeConstraint());
+        $this->validator->validate('', new CategoryCodeUnique());
 
         $this->assertNoViolation();
     }
@@ -52,7 +52,7 @@ class UniqueCategoryCodeConstraintValidatorTest extends ConstraintValidatorTestC
     public function testCategoryNotExistsValidation(): void
     {
         $this->query->method('findIdByCode')->willReturn($this->createMock(CategoryId::class));
-        $constraint = new UniqueCategoryCodeConstraint();
+        $constraint = new CategoryCodeUnique();
         $value = 'value';
         $this->validator->validate($value, $constraint);
 
@@ -60,8 +60,8 @@ class UniqueCategoryCodeConstraintValidatorTest extends ConstraintValidatorTestC
         $assertion->assertRaised();
     }
 
-    protected function createValidator(): UniqueCategoryCodeConstraintValidator
+    protected function createValidator(): CategoryCodeUniqueValidator
     {
-        return new UniqueCategoryCodeConstraintValidator($this->query);
+        return new CategoryCodeUniqueValidator($this->query);
     }
 }
