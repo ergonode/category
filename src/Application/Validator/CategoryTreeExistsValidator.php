@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Copyright © Bold Brand Commerce Sp. z o.o. All rights reserved.
  * See LICENSE.txt for license details.
@@ -7,31 +6,31 @@
 
 declare(strict_types=1);
 
-namespace Ergonode\Category\Infrastructure\Validator;
+namespace Ergonode\Category\Application\Validator;
 
-use Ergonode\SharedKernel\Domain\Aggregate\CategoryId;
-use Ergonode\Category\Domain\Repository\CategoryRepositoryInterface;
+use Ergonode\Category\Domain\Repository\TreeRepositoryInterface;
+use Ergonode\SharedKernel\Domain\Aggregate\CategoryTreeId;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class CategoryExistsValidator extends ConstraintValidator
+class CategoryTreeExistsValidator extends ConstraintValidator
 {
-    private CategoryRepositoryInterface $repository;
+    private TreeRepositoryInterface $repository;
 
-    public function __construct(CategoryRepositoryInterface $repository)
+    public function __construct(TreeRepositoryInterface $repository)
     {
         $this->repository = $repository;
     }
 
     /**
-     * @param mixed                     $value
-     * @param CategoryExists|Constraint $constraint
+     * @param mixed                         $value
+     * @param CategoryTreeExists|Constraint $constraint
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof CategoryExists) {
-            throw new UnexpectedTypeException($constraint, CategoryExists::class);
+        if (!$constraint instanceof CategoryTreeExists) {
+            throw new UnexpectedTypeException($constraint, CategoryTreeExists::class);
         }
 
         if (null === $value || '' === $value) {
@@ -41,10 +40,9 @@ class CategoryExistsValidator extends ConstraintValidator
         if (!is_scalar($value) && !(\is_object($value) && method_exists($value, '__toString'))) {
             throw new UnexpectedTypeException($value, 'string');
         }
-
         $value = (string) $value;
 
-        $result = $this->repository->exists(new CategoryId($value));
+        $result = $this->repository->exists(new CategoryTreeId($value));
 
         if (!$result) {
             $this->context->buildViolation($constraint->message)

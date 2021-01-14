@@ -7,12 +7,12 @@
 
 declare(strict_types=1);
 
-namespace Ergonode\Category\Tests\Infrastructure\Validator;
+namespace Ergonode\Category\Tests\Application\Validator;
 
 use Ergonode\SharedKernel\Domain\Aggregate\CategoryId;
 use Ergonode\Category\Domain\Repository\CategoryRepositoryInterface;
-use Ergonode\Category\Infrastructure\Validator\CategoryExists;
-use Ergonode\Category\Infrastructure\Validator\CategoryExistsValidator;
+use Ergonode\Category\Application\Validator\CategoryExists;
+use Ergonode\Category\Application\Validator\CategoryExistsValidator;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;

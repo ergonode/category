@@ -14,7 +14,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
-class UniqueCategoryCodeConstraintValidator extends ConstraintValidator
+class CategoryCodeUniqueValidator extends ConstraintValidator
 {
     private CategoryQueryInterface $query;
 
@@ -25,12 +25,12 @@ class UniqueCategoryCodeConstraintValidator extends ConstraintValidator
 
     /**
      * @param mixed                                   $value
-     * @param UniqueCategoryCodeConstraint|Constraint $constraint
+     * @param CategoryCodeUnique|Constraint $constraint
      */
     public function validate($value, Constraint $constraint): void
     {
-        if (!$constraint instanceof UniqueCategoryCodeConstraint) {
-            throw new UnexpectedTypeException($constraint, UniqueCategoryCodeConstraint::class);
+        if (!$constraint instanceof CategoryCodeUnique) {
+            throw new UnexpectedTypeException($constraint, CategoryCodeUnique::class);
         }
 
         if (null === $value || '' === $value) {
